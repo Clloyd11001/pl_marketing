@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Planogram Grid Example</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            gap: 20px;
+            background: #f5f7f6;
+            padding: 20px;
+        }
+
+        #planogram-container table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #planogram-container td {
+            border: 1px solid #ccc;
+            padding: 16px;
+            text-align: center;
+            font-weight: bold;
+            background: #d0f0e8;
+            border-radius: 10px;
+        }
+
+        #planogram-container small {
+            display: block;
+            margin-top: 4px;
+            font-weight: normal;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .generate-button {
+            background-color: #c2fbd7;
+            border-radius: 100px;
+            box-shadow: rgba(44, 187, 99, .2) 0 -25px 18px -14px inset,
+                rgba(44, 187, 99, .15) 0 1px 2px,
+                rgba(44, 187, 99, .15) 0 2px 4px,
+                rgba(44, 187, 99, .15) 0 4px 8px,
+                rgba(44, 187, 99, .15) 0 8px 16px,
+                rgba(44, 187, 99, .15) 0 16px 32px;
+            color: green;
+            cursor: pointer;
+            font-family: CerebriSans-Regular, -apple-system, system-ui, Roboto, sans-serif;
+            padding: 10px 30px;
+            text-align: center;
+            border: none;
+            font-size: 16px;
+            user-select: none;
+            width: 100%;
+            max-width: 400px;
+            transition: box-shadow 250ms;
+        }
+
+        .generate-button:hover {
+            box-shadow: rgba(44, 187, 99, .35) 0 -25px 18px -14px inset,
+                rgba(44, 187, 99, .25) 0 1px 2px,
+                rgba(44, 187, 99, .25) 0 2px 4px,
+                rgba(44, 187, 99, .25) 0 4px 8px,
+                rgba(44, 187, 99, .25) 0 8px 16px,
+                rgba(44, 187, 99, .25) 0 16px 32px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="planogram-container" aria-live="polite"></div>
+
+    <button class="generate-button" onclick="generatePlanogram()">Generate Planogram</button>
+
+    <!-- Import your JS module -->
+    <script type="module" src="./main.js"></script>
+
+</body>
+
+</html>

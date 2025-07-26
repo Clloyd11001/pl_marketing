@@ -2,23 +2,27 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Planogram Grid Example</title>
-    <link rel="stylesheet" href="planogram.css">
-    <style>
-      
-
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Planogram Grid Example</title>
+  <link rel="stylesheet" href="planogram.css" />
 </head>
 
 <body>
+  <div class="container">
+    <div>
+      <h3 style="margin-left: 130px;">Original Planogram</h3>
+      <div id="original-planogram-container"></div>
+    </div>
+    <div>
+      <h3 style="margin-left: 130px;">Revised Planogram</h3>
+      <div id="revised-planogram-container"></div>
+    </div>
+  </div>
 
-    <div id="planogram-container" class="planogram" aria-live="polite"></div>
+  <button id="generate-btn" class="generate-button">Generate Planogram</button>
 
-    <script type="module" src="./planogram.js">
-    </script>
-    <button class="generate-button" onclick="generatePlanogram()">Generate Planogram</button>
+  <script type="module" src="./planogram.js"></script>
 </body>
 
 </html>

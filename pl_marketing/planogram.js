@@ -1,3 +1,4 @@
+let sorted = false;
 // products array (exported for external use if needed)
 const products = [
     { brand: "A", color: "Pure Green", salesRank: 2 },
@@ -41,61 +42,77 @@ function toGrid(products, rows, cols) {
     return grid;
 }
 
-function renderGrid(grid, container) {
-    const oldCells = Array.from(container.querySelectorAll('td'));
-    const oldRects = new Map();
-    
-    oldCells.forEach(cell => {
-        const key = cell.dataset.key;
-        if (key) {
-            oldRects.set(key, cell.getBoundingClientRect());
-        }
-    });
+/**
+ * Renders the grid inside the container and animates moves using FLIP.
+ * @param {Array} grid 2D array of products
+ * @param {HTMLElement} container DOM element to render into
+ * @param {Map|null} oldRects Map of data-key to previous DOMRect for FLIP animation (optional)
+ */
+function renderGrid(grid, container, oldRects = null) {
+    if (!oldRects) {
+        oldRects = new Map();
+        const oldCells = Array.from(container.querySelectorAll("td"));
+        oldCells.forEach((cell) => {
+            const key = cell.dataset.key;
+            if (key) {
+                oldRects.set(key, cell.getBoundingClientRect());
+            }
+        });
+    }
 
     // Clear and re-render the grid
-    let html = '<table>';
-    grid.forEach((row, rowIndex) => {
-        html += '<tr>';
-        row.forEach((product, colIndex) => {
-            let src = '';
+    let html = "<table>";
+    grid.forEach((row) => {
+        html += "<tr>";
+        row.forEach((product) => {
+            let src = "";
             if (product) {
                 switch (product.color.toLowerCase()) {
                     case "black":
-                        src = 'images/black_soda.png'; break;
+                        src = "images/black_soda.png";
+                        break;
                     case "blue":
-                        src = 'images/blue_soda.png'; break;
+                        src = "images/blue_soda.png";
+                        break;
                     case "brown":
-                        src = 'images/brown_soda.png'; break;
+                        src = "images/brown_soda.png";
+                        break;
                     case "green":
-                        src = 'images/green_soda.png'; break;
+                        src = "images/green_soda.png";
+                        break;
                     case "orange":
-                        src = 'images/orange_soda.png'; break;
+                        src = "images/orange_soda.png";
+                        break;
                     case "pure green":
-                        src = 'images/pure_green_soda.png'; break;
+                        src = "images/pure_green_soda.png";
+                        break;
                     case "yellow":
-                        src = 'images/yellow_soda.png'; break;
-                    default: break;
+                        src = "images/yellow_soda.png";
+                        break;
+                    default:
+                        break;
                 }
 
                 const key = `${product.brand}-${product.color}`;
 
                 html += `
-                    <td data-key="${key}">
-                        <img src="${src}" style="width:60px;height:auto;margin-top:8px;">
-                    </td>`;
+    <td data-key="${key}">
+        <img src="${src}" style="width:60px; height:auto; margin-top:8px; display:block;">
+    </td>`;
+
             } else {
-                html += '<td></td>';
+                html += "<td></td>";
             }
         });
-        html += '</tr>';
+        html += "</tr>";
     });
-    html += '</table>';
+    html += "</table>";
     container.innerHTML = html;
 
     // Animate movement using FLIP
     requestAnimationFrame(() => {
-        const newCells = Array.from(container.querySelectorAll('td'));
-        newCells.forEach(cell => {
+        const newCells = Array.from(container.querySelectorAll("td"));
+        newCells.forEach((cell) => {
             const key = cell.dataset.key;
             if (!key) return;
 
@@ -107,44 +124,84 @@ function renderGrid(grid, container) {
                 const dy = oldRect.top - newRect.top;
 
                 cell.style.transform = `translate(${dx}px, ${dy}px)`;
-                cell.style.transition = 'none';
+                cell.style.transition = "none";
 
                 requestAnimationFrame(() => {
-                    cell.style.transition = 'transform 500ms ease';
-                    cell.style.transform = 'translate(0, 0)';
+                    cell.style.transition = "transform 500ms ease";
+                    cell.style.transform = "translate(0, 0)";
                 });
             }
         });
     });
 }
 
-function generateUnsorted() {
-    const container = document.getElementById('planogram-container');
-    const selected = products.slice(0, 9);
-    const grid = toGrid(selected, 3, 3);
+function generateUnsorted(rows = 3, cols = 3, containerId = "original-planogram-container") {
+    const container = document.getElementById(containerId);
+    const selected = products.slice(0, rows * cols);
+    const grid = toGrid(selected, rows, cols);
     renderGrid(grid, container);
 }
 
-// Main function to generate and display planogram grid
-function generatePlanogram(rows = 3, cols = 3) {
-    const container = document.getElementById("planogram-container");
+function renderPlanogramWithAnimation(rows = 3, cols = 3, sortedState = false) {
+    const container = document.getElementById("revised-planogram-container");
     const totalSpots = rows * cols;
     const selectedProducts = products.slice(0, totalSpots);
-    const layout = createPlanogram(selectedProducts);
+    let layout;
+
+    if (sortedState) {
+        layout = createPlanogram(selectedProducts);
+    } else {
+        layout = selectedProducts;
+    }
+
     const grid = toGrid(layout, rows, cols);
     renderGrid(grid, container);
 }
 
-// Expose functions or variables you want accessible in HTML
+function handleGenerateClick() {
+    if (!sorted) {
+        // Show sorted (flipped)
+        renderPlanogramWithAnimation(3, 3, true);
+        const btn = document.getElementById('generate-btn');
+        btn.textContent = "Revert back to Unsorted"
+    } else {
+        // Show unsorted (flipped back)
+        renderPlanogramWithAnimation(3, 3, false);
+    }
+    sorted = !sorted;
+}
+
+function generatePlanogram(rows = 3, cols = 3) {
+    toggleSorted();
+    const container = document.getElementById("revised-planogram-container");
+
+    // Capture old positions before rendering the revised planogram
+    const oldCells = Array.from(container.querySelectorAll("td"));
+    const oldRects = new Map();
+    oldCells.forEach((cell) => {
+        const key = cell.dataset.key;
+        if (key) {
+            oldRects.set(key, cell.getBoundingClientRect());
+        }
+    });
+
+    const totalSpots = rows * cols;
+    const selectedProducts = products.slice(0, totalSpots);
+    const layout = createPlanogram(selectedProducts);
+    const grid = toGrid(layout, rows, cols);
+
+    renderGrid(grid, container, oldRects);
+}
+
+// Expose to window for HTML access
 window.generatePlanogram = generatePlanogram;
 window.generateUnsorted = generateUnsorted;
 
 window.addEventListener("DOMContentLoaded", () => {
-    generateUnsorted();
+    generateUnsorted(3, 3, 'original-planogram-container');
+    generateUnsorted(3, 3, 'revised-planogram-container');
 
     const generateBtn = document.getElementById("generate-btn");
-    generateBtn.addEventListener("click", () => {
-        generatePlanogram();
-    });
+    generateBtn.addEventListener("click", handleGenerateClick);
 });
 export { products };
